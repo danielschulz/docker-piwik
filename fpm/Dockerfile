@@ -1,6 +1,6 @@
 FROM php:5.6-fpm
 
-MAINTAINER pierre@piwik.org
+MAINTAINER pierre@piwik.org, Daniel Schulz <danielschulz2005@hotmail.com>
 
 RUN apt-get update && apt-get install -y \
       libjpeg-dev \
@@ -17,7 +17,7 @@ RUN docker-php-ext-configure gd --with-freetype-dir=/usr --with-png-dir=/usr --w
 
 RUN pecl install APCu geoip
 
-ENV PIWIK_VERSION 3.0.3
+ARG PIWIK_VERSION=3.0.3
 
 RUN curl -fsSL -o piwik.tar.gz \
       "https://builds.piwik.org/piwik-${PIWIK_VERSION}.tar.gz" \
@@ -26,7 +26,7 @@ RUN curl -fsSL -o piwik.tar.gz \
  && export GNUPGHOME="$(mktemp -d)" \
  && gpg --keyserver ha.pool.sks-keyservers.net --recv-keys 814E346FA01A20DBB04B6807B5DBD5925590A237 \
  && gpg --batch --verify piwik.tar.gz.asc piwik.tar.gz \
- && rm -r "$GNUPGHOME" piwik.tar.gz.asc \
+ && rm -r "${GNUPGHOME}" piwik.tar.gz.asc \
  && tar -xzf piwik.tar.gz -C /usr/src/ \
  && rm piwik.tar.gz
 
@@ -40,6 +40,8 @@ COPY docker-entrypoint.sh /entrypoint.sh
 # WORKDIR is /var/www/html (inherited via "FROM php")
 # "/entrypoint.sh" will populate it at container startup from /usr/src/piwik
 VOLUME /var/www/html
+
+ARG PROXY_IP=${PROXY_IP}
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["php-fpm"]
