@@ -10,9 +10,9 @@ if [ ! -e piwik.php ]; then
     export NEW_VALUES="${NEW_VALUES}proxy_host_headers[] = HTTP_X_FORWARDED_HOST\n"
     export NEW_VALUES="${NEW_VALUES}proxy_ips[] = ${PROXY_IP}"
 
-    sed -i -e "s|^\[General\]$|[General]\n${NEW_VALUES}|g" /var/www/html/config/config.ini.php
+    sed -i -e "s|^\[General\]$|[General]\n${NEW_VALUES}|g" /var/www/html/config/global.ini.php
 
-	chown -R www-data .
+    chown -R www-data .
 fi
 
 exec "$@"
