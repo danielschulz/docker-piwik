@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
       libpng12-dev \
       libldap2-dev \
       zip \
+      unzip \
  && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-configure gd --with-freetype-dir=/usr --with-png-dir=/usr --with-jpeg-dir=/usr \
@@ -33,7 +34,9 @@ RUN curl -fsSL -o piwik.tar.gz \
 COPY php.ini /usr/local/etc/php/php.ini
 
 RUN curl -fsSL -o /usr/src/piwik/misc/GeoIPCity.dat.gz http://geolite.maxmind.com/download/geoip/database/GeoLiteCity.dat.gz \
- && gunzip /usr/src/piwik/misc/GeoIPCity.dat.gz
+ && gunzip /usr/src/piwik/misc/GeoIPCity.dat.gz && \
+ curl -fsSL -o /usr/src/piwik/plugins/ldap-plugin.zip https://plugins.piwik.org/api/2.0/plugins/LoginLdap/download/4.0.0 \
+ && unzip /usr/src/piwik/plugins/ldap-plugin.zip
 
 COPY docker-entrypoint.sh /entrypoint.sh
 
